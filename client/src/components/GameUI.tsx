@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useGameState } from "@/lib/stores/useGameState";
 import { useAudio } from "@/lib/stores/useAudio";
@@ -17,24 +17,53 @@ export default function GameUI() {
   } = useGameState();
   const { toggleMute, isMuted } = useAudio();
   
-  const [countdown, setCountdown] = useState(0);
+  const [countdown, setCountdown] = useState(-1);
   const [levelTime, setLevelTime] = useState(0);
+  const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const hasStartedCountdown = useRef(false);
 
   // Handle countdown before level starts
   useEffect(() => {
-    if (gameScreen === 'playing' && countdown === 0) {
-      setCountdown(3);
-      const countdownTimer = setInterval(() => {
-        setCountdown(prev => {
-          if (prev <= 1) {
-            clearInterval(countdownTimer);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+    if (gameScreen === 'playing') {
+      // Reset and start countdown when entering playing screen
+      if (!hasStartedCountdown.current) {
+        hasStartedCountdown.current = true;
+        setCountdown(3);
+        
+        // Clear any existing timer
+        if (countdownTimerRef.current) {
+          clearInterval(countdownTimerRef.current);
+        }
+        
+        countdownTimerRef.current = setInterval(() => {
+          setCountdown(prev => {
+            if (prev <= 1) {
+              if (countdownTimerRef.current) {
+                clearInterval(countdownTimerRef.current);
+                countdownTimerRef.current = null;
+              }
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+      }
+    } else {
+      // Reset when leaving playing screen
+      hasStartedCountdown.current = false;
+      setCountdown(-1);
+      if (countdownTimerRef.current) {
+        clearInterval(countdownTimerRef.current);
+        countdownTimerRef.current = null;
+      }
     }
-  }, [gameScreen, countdown]);
+    
+    return () => {
+      if (countdownTimerRef.current) {
+        clearInterval(countdownTimerRef.current);
+      }
+    };
+  }, [gameScreen]);
 
   // Track level time
   useEffect(() => {
