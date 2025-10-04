@@ -36,13 +36,13 @@ export default function Zombie() {
     newZ = THREE.MathUtils.lerp(newZ, targetZ, lerpFactor);
     newY = 1; // Keep zombie on ground
 
-    // Check if zombie caught player
+    // Check if zombie caught player (horizontal distance only)
     const distance = Math.sqrt(
       Math.pow(playerPosition.x - newX, 2) + 
       Math.pow(playerPosition.z - newZ, 2)
     );
 
-    if (distance < 2) {
+    if (distance < 2.5) {
       setGameScreen('gameOver');
     }
 
@@ -51,7 +51,7 @@ export default function Zombie() {
     setZombiePosition(newPosition);
     mesh.position.set(newX, newY, newZ);
 
-    // Make zombie look menacing - rotate slightly
+    // Make zombie look menacing - rotate slightly and animate
     mesh.rotation.y = Math.sin(state.clock.elapsedTime * 3) * 0.1;
   });
 

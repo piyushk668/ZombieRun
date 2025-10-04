@@ -24,16 +24,24 @@ const controls = [
 // Main App component
 function App() {
   const { gameScreen } = useGameState();
-  const { setBackgroundMusic, backgroundMusic, isMuted } = useAudio();
+  const { setBackgroundMusic, setHitSound, setSuccessSound, backgroundMusic, isMuted } = useAudio();
   const [showCanvas, setShowCanvas] = useState(false);
 
-  // Initialize background music
+  // Initialize audio
   useEffect(() => {
     const music = new Audio("/sounds/background.mp3");
     music.loop = true;
     music.volume = 0.3;
     setBackgroundMusic(music);
-  }, [setBackgroundMusic]);
+    
+    const hit = new Audio("/sounds/hit.mp3");
+    hit.volume = 0.5;
+    setHitSound(hit);
+    
+    const success = new Audio("/sounds/success.mp3");
+    success.volume = 0.5;
+    setSuccessSound(success);
+  }, [setBackgroundMusic, setHitSound, setSuccessSound]);
 
   // Handle background music playback
   useEffect(() => {

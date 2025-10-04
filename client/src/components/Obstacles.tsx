@@ -80,9 +80,13 @@ export default function Obstacles() {
     if (gameScreen !== 'playing') return;
 
     obstacles.forEach((obstacle) => {
+      // Only check obstacles that are close to the player
+      const distanceToObstacle = Math.abs(playerPosition.z - obstacle.position.z);
+      if (distanceToObstacle > 5) return; // Skip far obstacles
+      
       const collision = checkCollision(
         playerPosition,
-        { x: 1.5, y: 2, z: 1.5 }, // Player size
+        { x: 1.5, y: isSliding ? 0.5 : 2, z: 1.5 }, // Player size (adjust for sliding)
         obstacle.position,
         obstacle.size
       );
@@ -90,16 +94,19 @@ export default function Obstacles() {
       if (collision) {
         switch (obstacle.type) {
           case 'spike':
-            if (!isJumping) {
+            // Can jump over spikes
+            if (!isJumping || playerPosition.y < 2) {
               setGameScreen('gameOver');
             }
             break;
           case 'barrier':
+            // Must slide under barriers
             if (!isSliding) {
               setGameScreen('gameOver');
             }
             break;
           case 'trap':
+            // Traps trigger mini-game
             setGameScreen('trapped');
             break;
         }

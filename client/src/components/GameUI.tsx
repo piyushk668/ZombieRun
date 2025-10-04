@@ -199,9 +199,9 @@ export default function GameUI() {
             {gems >= 50 && (
               <Button
                 onClick={() => {
-                  // Spend gems to continue
-                  // This would be implemented in the game state
-                  setGameScreen('playing');
+                  // This feature would spend gems and continue
+                  // For now, just restart the level
+                  restartLevel();
                 }}
                 variant="outline"
                 className="flex-1 py-3 font-bold border-yellow-500 text-yellow-600 hover:bg-yellow-50"
