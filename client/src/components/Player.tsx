@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useKeyboardControls } from "@react-three/drei";
 import * as THREE from "three";
@@ -14,10 +14,17 @@ export default function Player() {
     isJumping,
     setIsJumping,
     isSliding,
-    setIsSliding 
+    setIsSliding,
+    setGameScreen,
+    currentLevel
   } = useGameState();
 
   const [, getKeys] = useKeyboardControls();
+  const [jumpVelocity, setJumpVelocity] = useState(0);
+  const [slideTimer, setSlideTimer] = useState(0);
+  
+  // Level completion distance (increases with level)
+  const levelCompletionDistance = -500 - (currentLevel * 100);
 
   // Player movement and physics
   useFrame((state, delta) => {
@@ -44,33 +51,37 @@ export default function Player() {
     // Forward movement (continuous)
     newZ -= playerSpeed * delta;
 
-    // Jump mechanics
-    if (keys.jump && !isJumping && !isSliding) {
+    // Check level completion
+    if (newZ < levelCompletionDistance) {
+      setGameScreen('levelComplete');
+      return;
+    }
+
+    // Jump mechanics - only trigger if on ground
+    if (keys.jump && !isJumping && !isSliding && newY <= 1.1) {
       setIsJumping(true);
+      setJumpVelocity(18); // Initial jump velocity
     }
 
     // Slide mechanics
-    if (keys.slide && !isSliding && !isJumping) {
+    if (keys.slide && !isSliding && !isJumping && newY <= 1.1) {
       setIsSliding(true);
+      setSlideTimer(0.6); // 600ms slide duration
     }
 
-    // Handle jumping physics
+    // Handle jumping physics with proper gravity
     if (isJumping) {
-      const jumpHeight = 6;
-      const jumpTime = 0.8;
-      const jumpSpeed = (jumpHeight * 2) / jumpTime;
+      const gravity = 40;
+      const newVelocity = jumpVelocity - gravity * delta;
+      setJumpVelocity(newVelocity);
       
-      newY += jumpSpeed * delta;
-      if (newY >= jumpHeight) {
-        newY = jumpHeight;
-        // Start falling
-        const fallSpeed = jumpSpeed;
-        newY -= fallSpeed * delta;
-      }
+      newY += newVelocity * delta;
       
+      // Land on ground
       if (newY <= 1) {
         newY = 1;
         setIsJumping(false);
+        setJumpVelocity(0);
       }
     } else if (!isSliding) {
       newY = 1; // Ground level
@@ -79,8 +90,13 @@ export default function Player() {
     // Handle sliding physics
     if (isSliding) {
       newY = 0.3; // Lower position
-      // Slide duration
-      setTimeout(() => setIsSliding(false), 600);
+      const newSlideTimer = slideTimer - delta;
+      setSlideTimer(newSlideTimer);
+      
+      if (newSlideTimer <= 0) {
+        setIsSliding(false);
+        setSlideTimer(0);
+      }
     }
 
     // Update position
@@ -92,6 +108,7 @@ export default function Player() {
     
     // Update camera to follow player
     state.camera.position.x = newX;
+    state.camera.position.y = 5;
     state.camera.position.z = newZ + 10;
     state.camera.lookAt(newX, newY, newZ);
   });
@@ -101,7 +118,7 @@ export default function Player() {
     if (meshRef.current) {
       meshRef.current.position.set(playerPosition.x, playerPosition.y, playerPosition.z);
     }
-  }, [playerPosition]);
+  }, []);
 
   return (
     <mesh ref={meshRef} castShadow>
