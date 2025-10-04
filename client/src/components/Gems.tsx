@@ -19,12 +19,17 @@ export default function Gems() {
     gameScreen, 
     gems,
     addGem,
-    collectGem
+    collectGem,
+    currentLevel
   } = useGameState();
   const { playSuccess } = useAudio();
+  const collectedGems = useRef<Set<string>>(new Set());
 
-  // Generate gems
+  // Generate gems - regenerate when level changes
   const gemList = useMemo(() => {
+    // Reset collected gems when level changes
+    collectedGems.current = new Set();
+    
     const newGems: Gem[] = [];
     const gemCount = 100;
     const startZ = -20;
@@ -38,7 +43,7 @@ export default function Gems() {
       // Random chance to spawn gem
       if (Math.random() < 0.6) {
         newGems.push({
-          id: `gem-${i}`,
+          id: `gem-${currentLevel}-${i}`,
           position: { 
             x: lane + (Math.random() - 0.5) * 2, 
             y: 1.5 + Math.random() * 2, 
@@ -51,7 +56,7 @@ export default function Gems() {
     }
     
     return newGems;
-  }, []);
+  }, [currentLevel]);
 
   // Collision detection and gem rotation
   useFrame((state) => {
@@ -59,7 +64,13 @@ export default function Gems() {
 
     groupRef.current.children.forEach((gemMesh, index) => {
       const gem = gemList[index];
-      if (!gem || gem.collected) return;
+      if (!gem) return;
+      
+      // Skip if already collected
+      if (collectedGems.current.has(gem.id)) {
+        gemMesh.visible = false;
+        return;
+      }
 
       // Rotate gem
       gemMesh.rotation.y += gem.rotationSpeed * state.clock.getDelta();
@@ -73,8 +84,9 @@ export default function Gems() {
         { width: 1, height: 1, depth: 1 } // Gem size
       );
 
-      if (collision && !gem.collected) {
-        gem.collected = true;
+      if (collision) {
+        // Mark as collected
+        collectedGems.current.add(gem.id);
         collectGem();
         addGem(10); // Add 10 points per gem
         playSuccess();
@@ -91,7 +103,6 @@ export default function Gems() {
         <mesh
           key={gem.id}
           position={[gem.position.x, gem.position.y, gem.position.z]}
-          visible={!gem.collected}
         >
           <octahedronGeometry args={[0.5]} />
           <meshLambertMaterial color="#fbbf24" emissive="#f59e0b" emissiveIntensity={0.2} />
