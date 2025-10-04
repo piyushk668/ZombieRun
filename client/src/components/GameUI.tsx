@@ -99,27 +99,27 @@ export default function GameUI() {
   }
 
   // Playing UI
-  if (gameScreen === 'playing') {
+  if (gameScreen === 'playing' && countdown === 0) {
     return (
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-0 pointer-events-none z-10">
         {/* Top UI */}
         <div className="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-auto flex-wrap gap-2">
-          <div className="bg-black/60 backdrop-blur-sm rounded-lg p-3 text-white">
+          <div className="bg-black/70 backdrop-blur-md rounded-lg p-3 text-white shadow-lg">
             <div className="text-sm opacity-80">Level {currentLevel}</div>
             <div className="text-lg font-bold">{playerName}</div>
           </div>
           
-          <div className="bg-black/60 backdrop-blur-sm rounded-lg p-3 text-white text-center">
+          <div className="bg-black/70 backdrop-blur-md rounded-lg p-3 text-white text-center shadow-lg border-2 border-blue-400">
             <div className="text-sm opacity-80">Score</div>
-            <div className="text-lg font-bold text-blue-400">{score}</div>
+            <div className="text-2xl font-bold text-blue-300">{score}</div>
           </div>
           
-          <div className="bg-black/60 backdrop-blur-sm rounded-lg p-3 text-white text-center">
+          <div className="bg-black/70 backdrop-blur-md rounded-lg p-3 text-white text-center shadow-lg">
             <div className="text-sm opacity-80">Time</div>
             <div className="text-lg font-bold">{formatTime(levelTime)}</div>
           </div>
           
-          <div className="bg-black/60 backdrop-blur-sm rounded-lg p-3 text-white text-center">
+          <div className="bg-black/70 backdrop-blur-md rounded-lg p-3 text-white text-center shadow-lg">
             <div className="text-sm opacity-80">Gems</div>
             <div className="text-lg font-bold text-yellow-400">💎 {gems}</div>
           </div>
