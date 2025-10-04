@@ -1,0 +1,99 @@
+Game Flow & Features
+
+Step 1 – Welcome Screen
+
+Display a dynamic Welcome Screen with background music and animated logo.
+
+Include “Start Game” and “View Terms & Conditions” buttons.
+
+Terms and Conditions open in a popup or modal view.
+
+Step 2 – Authentication
+
+Ask the user to Login via Google or Play as Guest.
+
+Store user progress and gem count 
+
+Step 3 – Tutorial and Start
+
+After login, show a short Quick Tutorial on controls (swipe to jump, slide, or turn).
+
+Add a “Start Run” button after tutorial completion.
+
+Step 4 – Level System & Difficulty
+
+Game is level-based, not endless.
+
+Each level has increasing difficulty — faster zombie speed, more traps, and higher puzzle complexity.
+
+Save user’s current level.
+
+Step 5 – Core Gameplay
+
+Main character continuously runs forward in a 3D jungle or city environment.
+
+Collect green diamonds to increase score and unlock skins/power-ups.
+
+A zombie constantly chases the player; if the zombie catches the player, the level ends.
+
+Add hidden traps (e.g., collapsing floors, spikes).
+
+If trapped, trigger a 60-second puzzle mini-game (like Candy Crush–style tile matching).
+
+If puzzle solved → player escapes trap and continues.
+
+If failed → level restarts.
+
+Step 6 – Level Completion
+
+On level completion, show a “Congratulations” screen with:
+
+Total gems collected
+
+Time taken
+
+“Start Next Level” button
+
+updates user’s progress
+
+Step 7 – Countdown
+
+Before starting the next level, show a 3-second countdown with visual and sound effects.
+
+Step 8 – Failure & Retry
+
+If player fails a level, show:
+
+“Restart Level” and “Continue (spend gems)” buttons
+
+updates attempt count
+
+Restart the level smoothly with no loading delay
+
+⚙️ Additional Requirements
+
+Store all player progress, gems, and level dat.
+
+Store player avatars or custom skins.
+
+Integrate Analytics to track player retention and level completion rates.
+
+Add optional leaderboard Realtime Database.
+
+Include AI-based dynamic difficulty — adjust speed/traps slightly based on user performance.
+
+🧠 Optional AI Enhancements
+
+Use AI-generated puzzle layouts (procedural generation).
+
+Include a dynamic voice-over (text-to-speech) that congratulates or teases players.
+
+Generate personalized daily challenges.
+
+🕹️ Art & Sound Direction
+
+Style: Semi-realistic jungle/city ruins.
+
+Music: Upbeat chase theme with intensity increasing per level.
+
+Sound Effects: Footsteps, zombie growls, gem collection, trap sounds.
