@@ -136,13 +136,20 @@ export default function TutorialScreen() {
           )}
         </div>
 
-        <div className="mt-6 text-center">
+        <div className="mt-6 text-center flex justify-center gap-4">
           <Button
             onClick={handleBack}
             variant="ghost"
             className="text-white hover:bg-white/10 transition-all duration-300"
           >
             ← Back to Login
+          </Button>
+          <Button
+            onClick={handleStartRun}
+            variant="ghost"
+            className="text-yellow-400 hover:bg-white/10 transition-all duration-300 font-bold"
+          >
+            Skip Tutorial →
           </Button>
         </div>
       </div>
